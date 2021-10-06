@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+    
+    <style>
+
+        #header /*page heading */
+        {
+            padding: 20px;
+            background-color: rgb(51, 51, 51);
+            font-family: 'Orbitron', sans-serif;
+            font-size:50px;
+            text-align: center;
+            color: white;
+        }
+        
+        #blackCircle /* background circle */
+        {
+            margin-top: 340px;
+            margin-left: 760px;
+            height: 400px;
+            width: 400px;
+            border-radius: 50%;
+            background-color: rgb(51, 51, 51);
+            font-family: 'Orbitron', sans-serif;
+
+        }
+
+        #greenCircle /*green*/
+        {
+            cursor: pointer;
+            margin-top: -475px;
+            margin-left: 675px;
+            height: 200px;
+            width: 200px;
+            border-radius: 50%;
+            background-color: rgb(82, 214, 6);
+            box-shadow: 0px 0px 0px 10px black;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #redCircle /*red*/
+        {
+            cursor: pointer;
+            margin-top: -200px;
+            margin-left: 1037.5px;
+            height: 200px;
+            width: 200px;
+            border-radius: 50%;
+            background-color: rgb(255, 0, 0);
+            box-shadow: 0px 0px 0px 10px black;
+            font-family: 'Orbitron', sans-serif;
+            
+        }
+
+        #yellowCircle /*yellow*/
+        {
+            cursor: pointer;
+            margin-top: 150px;
+            margin-left: 675px;
+            height: 200px;
+            width: 200px;
+            border-radius: 50%;
+            background-color: rgb(241, 255, 51);
+            box-shadow: 0px 0px 0px 10px black;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #blueCircle /*blue*/
+        {
+            cursor: pointer;
+            margin-top: -200px;
+            margin-left: 1037.5px;
+            height: 200px;
+            width: 200px;
+            border-radius: 50%;
+            background-color: rgb(0, 4, 255);
+            box-shadow: 0px 0px 0px 10px black;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #startButton
+        {
+            cursor: pointer;
+            margin-top: -100px;
+            margin-left: 885px;
+            height: 50px;
+            width: 150px;
+            border-radius: 5%;
+            background-color:rgb(141, 133, 133);
+            text-align: center;
+            font-size:35px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #startCircle
+        {
+            
+            margin-top: -200px;
+            margin-left: 950px;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background-color: rgb(255, 0, 0);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #highScore /*high score on screen */
+        {
+            margin-top: -50px;
+            margin-left: 780px;
+            height: 50px;
+            width: 80px;
+            border-radius: 5%;
+            background-color:rgb(141, 133, 133);
+            text-align: center;
+            font-size:40px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #currentScore /*current score on screen */
+        {
+            margin-top: -50px;
+            margin-left: 1060px;
+            height: 50px;
+            width: 80px;
+            border-radius: 5%;
+            background-color:rgb(141, 133, 133);
+            text-align: center;
+            font-size:40px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #highScoreTextBox /*'high score' text*/
+        {
+            margin-top:-100px;
+            margin-left: 780px;
+            height: 40px;
+            width: 80px;
+            border-radius: 5%;
+            background-color:rgb(141, 133, 133);
+            text-align: center;
+            font-size:15px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        #currentScoreTextBox /*'score' text*/
+        {
+            margin-top:-40px;
+            margin-left: 1060px;
+            height: 40px;
+            width: 80px;
+            border-radius: 5%;
+            background-color:rgb(141, 133, 133);
+            text-align: center;
+            font-size:13px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+    </style>
+
+    <head>
+        <link rel="preconnect" href="https://fonts.gstatic.com">                                       <!-- required font -->
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">  <!-- required font -->
+
+        <body>
+            <div id="header">Simon Game</div>
+            
+            <div id="blackCircle"></div>
+
+            <div id="greenCircle"></div>
+            <div id="redCircle"></div>
+            <div id="yellowCircle"></div>
+            <div id="blueCircle"></div>
+            
+            <div id="startCircle"></div>
+            <div id="startButton" onclick="changeStartCircle()">START</div>
+
+            <div id="highScore">0</div>
+            <div id="currentScore">0</div>
+
+            <div id="highScoreTextBox">HIGH SCORE</div>
+            <div id="currentScoreTextBox">CURRENT SCORE</div>
+
+            
+            <script>  
+
+                /*References:
+                Used John Keating's (JK) code to learn about event managing and how to setup and use
+                setTimeouts, and how I should best structure my functions and loop my game
+
+                Solution was tested in Google Chrome, on a Windows machine
+                Chrome version: Version 89.0.4389.72 (Official Build) (64-bit)
+                */
+
+                var sequence = []; //stores randomly generated sequence
+                var input = []; //stores user inputted sequence
+
+                var wrong; //boolean, stores if user was wrong or not
+
+                var showSequence; //boolean, stores if computer needs to show next sequence or not
+                var enterInput;  //boolean, stores if user needs to enter sequence or not
+
+                
+                var count; //used to cycle through sequence array and flash the circles
+                var gameInterval; // used to set interval for game function
+                var gameDelay; //delay for gameInterval
+
+                var currentround; //stores current round
+
+                var flashAllCounter = 5; //stores the amount of times to flash all circles
+
+                //4 circles
+                const redbutton = document.getElementById("redCircle");
+                const greenbutton = document.getElementById("greenCircle");
+                const yellowbutton = document.getElementById("yellowCircle");
+                const bluebutton = document.getElementById("blueCircle");
+
+                //start button and circle indicating whether game is on or not
+                const startButton = document.getElementById("startButton");
+                const startCircle = document.getElementById("startCircle");
+
+                //scores
+                const currentScore = document.getElementById("currentScore");
+                const highScore = document.getElementById("highScore");  
+
+                
+                const timeAllowed = 5000; //user is allowed 5 seconds/5000ms to enter each circle
+            
+                startButton.addEventListener("click", (event) => //when user clicks start the game starts
+                {
+                    start();
+                });
+
+                function start() //starts a new game
+                {
+                    changeStartCircle(); //changes start circle colour
+
+                    //all variables reset at start of new game
+                    sequence = []; 
+                    input = []; 
+                    count = 0;  
+                    wrong = false; 
+                    gameInterval = 0; 
+                    gameDelay = 1000; 
+                    currentround = 1; 
+                    currentScore.innerHTML = 00; 
+
+                    //fills sequence array randomly
+                    for( var i = 0; i < 100; i++)
+                    {
+                        sequence.push(Math.floor(Math.random() * 4) + 1); //math.floor rounds down to a whole number
+                    }
+
+                    showSequence = true; 
+
+                    gameInterval = setInterval(Game, gameDelay); 
+                }
+
+                function changeStartCircle()
+                {
+                    if(startCircle.style.backgroundColor = "rgb(255, 0, 0)") //if it is red change it to green
+                    {
+                        startCircle.style.backgroundColor = "rgb(82, 214, 6)";
+                    }
+
+                    else if(startCircle.style.backgroundColor = "rgb(82, 214, 6)")  //if it is  green change it to red
+                    {
+                        startCircle.style.backgroundColor = "rgb(255, 0, 0)";
+                    }   
+                } 
+            
+                function Game() //executs when the game needs to show the sequence
+                {
+            
+                    enterInput = false; //not the players turn to enter iput
+
+                    if(count == currentround) //if the count equals the current round, then the game has shown the sequence
+                    {  //and its time for user to enter input again
+
+                        clearInterval(gameInterval);
+                        showSequence= false;
+                        clearScreen();
+
+                        enterInput = true;
+                        inputTimer = setTimeout(noTime, timeAllowed);
+                    }
+            
+                    else if(showSequence) //if its time for the game to show the sequence
+                    {
+
+                        setTimeout(clearScreen(), 200); //clears screen
+
+                        setTimeout(() => {
+
+                            if(sequence[count] == 1) //1 = red
+                            {
+
+                                redCircle.style.backgroundColor = "white";
+                            }
+
+                            if(sequence[count] == 2)  //2 = green
+                            {
+                                greenCircle.style.backgroundColor = "white"
+                            }
+
+                            if(sequence[count] == 3) //3 = yellow
+                            {
+                                yellowCircle.style.backgroundColor = "white"
+                            }
+
+                            if(sequence[count] == 4)  //4 = blue
+                            {
+                                blueCircle.style.backgroundColor = "white"
+                            }
+
+                            count++; //increase count
+                        }, 400)
+                    }
+                }
+
+            
+                function clearScreen() //clears the screen/resets circles back to original colours
+                {
+                    redCircle.style.backgroundColor = "rgb(255, 0, 0)";
+                    greenCircle.style.backgroundColor = "rgb(82, 214, 6)";
+                    yellowCircle.style.backgroundColor = "rgb(241, 255, 51)";
+                    blueCircle.style.backgroundColor = "rgb(0, 4, 255)";
+                }
+
+
+
+                function flashAll() //flash all 4 circles for when player loses.
+                //a black flash is used to show the game is over 
+                {
+
+                    redCircle.style.backgroundColor = "black";
+                    greenCircle.style.backgroundColor = "black";
+                    yellowCircle.style.backgroundColor = "black";
+                    blueCircle.style.backgroundColor = "black";
+
+                    if(flashAllCounter > 0) //if there are still flashes that needed to be executed
+                    {
+                        setTimeout(function() //flash
+                        {
+                            flashAll();
+                        }, 400);
+
+                        setTimeout(function() //then rest the colours
+                        {
+                            clearScreen();
+                        }, 200);
+            
+                        flashAllCounter--; //decrease flash counter as one flash run has been executed
+                    }
+
+                    else  //if there are no flashes left to be executed
+                    {
+                        clearScreen(); //reset colours back to normal
+                        startButton.style.fontSize="35px";  //font fize for "START"
+                        startButton.innerHTML = "START";  //change button back to START
+                    }
+                }
+                
+                redCircle.addEventListener('click', (event) => { //if user clicks red circle
+                    if(enterInput) //if it is time for the user to enter input
+                    {
+                        input.push(1); //add a 1 to the user inputted sequence
+                        correct(); //check if input is correct
+                        document.getElementById("redCircle").style.backgroundColor = "white";  //flash red
+                        setTimeout(() => {clearScreen();}, 400);
+                        clearTimeout(inputTimer);
+                    }   
+                });
+            
+            
+                greenCircle.addEventListener('click', (event) => { //if user clicks green circle
+                    if(enterInput) //if it is time for the user to enter input
+                    {
+                        input.push(2); //add a 2 to the user inputted sequence
+                        correct(); //check if input is correct
+                        document.getElementById("greenCircle").style.backgroundColor = "white"  //flash green
+                        setTimeout(() => {clearScreen();}, 400);
+                        clearTimeout(inputTimer);
+                    }   
+                });
+            
+                yellowCircle.addEventListener('click', (event) => { //if user clicks yellow circle
+                    if(enterInput) //if it is time for the user to enter input
+                    {
+                        input.push(3); //add a 3 to the user inputted sequence
+                        correct(); //check if input is correct
+                        document.getElementById("yellowCircle").style.backgroundColor = "white" //flash yellow
+                        setTimeout(() => {clearScreen();}, 400);
+                        clearTimeout(inputTimer);
+                    }   
+                });
+            
+                
+                blueCircle.addEventListener('click', (event) => {  //if user clicks blue circle
+                    if(enterInput) //if it is time for the user to enter input
+                    {
+                        input.push(4); //add a 4 to the user inputted sequence
+                        correct(); //check if input is correct
+                        document.getElementById("blueCircle").style.backgroundColor = "white"  //flash blue
+                        setTimeout(() => {clearScreen();}, 400);
+                        clearTimeout(inputTimer);
+                    }   
+                });
+            
+                function correct() //used to check if the circle the user just inputted is correct
+                {
+                    
+                    if(input[input.length - 1] != sequence[input.length -1]) //if last element of input is not equal to last element in sequence (only one element for first round)
+                    {
+                        wrong = true;
+                    }
+                       
+                    if(wrong == true) //player loses if they were wrong
+                    {
+                        lost();
+                    }
+                    
+                    if(input.length == 20 && wrong == false) //max rounds reached, reset game
+                    {
+                        changeStartCircle();
+                    }
+
+                    if(currentround == input.length && wrong == false) //if player was not wrong
+                    {
+                        currentround++;
+
+                        var currentScore = document.getElementById('currentScore').innerHTML; //current score
+                        var highScore = document.getElementById('highScore').innerHTML;  //highscore
+
+                        
+                            newCurrentScore();
+
+                            if(currentScore >= highScore) //increase high score if current score is equal or greater than it
+                            {
+                                newHighScore();       
+                            }
+
+                        input = [];
+                        showSequence = true;
+                        count = 0;
+                        
+                        if(currentround>5)  //after 5 sequences, interval between sequences speeds up
+                        {
+                            gameDelay = 800;
+                        }
+
+                        if(currentround>9) //after 9 sequences, interval between sequences speeds up again
+                        {
+                            gameDelay = 650;
+                        }
+
+                        if(currentround>13) //after 13 sequences, interval between sequences speeds up yet again
+                        {
+                            gameDelay = 500;
+                        }
+
+                        if(currentround == 100)
+                        {
+                            won();
+                        }
+
+                        gameInterval = setInterval(Game, gameDelay);
+                    }
+                }
+
+                function lost() //when user loses/clicks wrong button
+                {
+                    setTimeout(() => {flashAll()}, 200);  //flashAll function flashes all 4 circles
+                    startCircle.style.backgroundColor = "rgb(255, 0, 0)"; //startCircle goes back to red
+                    startButton.style.fontSize="22px";  //smaller font size to fit "GAME OVER"
+                    startButton.innerHTML = "GAME OVER"; 
+                    enterInput = false; //user cannot click circles when game is over
+                    flashAllCounter = 5; //reset flashAll counter
+                }
+
+                function won()  //if user has won... not gonna ever be used as it is called at 1000th round
+                {
+                    setTimeout(() => {flashAll()}, 200);  //flashAll function flashes all 4 circles
+                    startCircle.style.backgroundColor = "rgb(255, 0, 0)"; //startCircle goes back to red
+                    startButton.style.fontSize="22px";  //smaller font size to fit "GAME OVER"
+                    startButton.innerHTML = "WINNER"; 
+                    enterInput = false; //user cannot click circles when game is over
+                    flashAllCounter = 5; //reset flashAll counter
+                }
+
+                function noTime() //when user runs out of time/doesng input next element of the sequence within 5 seconds
+                {
+                    lost(); //same actions as lost
+                    startButton.innerHTML = "TIME UP"; //but change game over to time up
+                }
+
+                function newCurrentScore() //increase score count
+                {
+                    var x = document.getElementById('currentScore').innerHTML;  //gets current score
+                    x++;                                                 //adds one
+                    document.getElementById('currentScore').innerHTML = x;   //sets new current score
+                }
+
+                function newHighScore() //increase highscore count
+                {
+                    var x = document.getElementById('highScore').innerHTML; //gets current highscore
+                    x++;                                                 //adds one
+                    document.getElementById('highScore').innerHTML = x;   //sets new high score
+                }
+            </script>   
+    </body>
+</head>
+</html>
